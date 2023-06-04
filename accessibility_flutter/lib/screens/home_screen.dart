@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'voice_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -27,6 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _highContrastEnabled = !_highContrastEnabled;
     });
+  }
+
+  void _navigateToVoiceSearchScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => VoiceSearchScreen()),
+    );
   }
 
   @override
@@ -85,6 +93,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         // Adicione mais opções de acessibilidade aqui
                       ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListTile(
+                      leading: Icon(Icons.mic),
+                      title: Text('Pesquisar por Voz'),
+                      onTap: _navigateToVoiceSearchScreen,
                     ),
                   ),
                 ),
