@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,6 +7,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   double _textScaleFactor = 1.0;
+  bool _highContrastEnabled = false;
 
   void _increaseTextSize() {
     setState(() {
@@ -23,95 +23,108 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _toggleHighContrast() {
+    setState(() {
+      _highContrastEnabled = !_highContrastEnabled;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('App de Acessibilidade'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                textScaleFactor: _textScaleFactor,
-              ),
-              child: Text(
-                'Bem vindo ao app de acessibilidade',
-                style: Theme.of(context).textTheme.headline6,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return MaterialApp(
+      title: 'App de acessibilidade',
+      theme: _highContrastEnabled ? _buildHighContrastTheme() : _buildTheme(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('App de Acessibilidade'),
+        ),
+        body: Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Semantics(
-                  label: 'Decrease Text Size Button',
-                  hint: 'Double tap to decrease text size',
-                  button: true,
-                  onTapHint: 'Double tap to decrease text size',
-                  child: GestureDetector(
-                    onTap: _decreaseTextSize,
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.remove,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
+                MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaleFactor: _textScaleFactor,
+                  ),
+                  child: Text(
+                    'Bem vindo ao app de acessibilidade',
+                    style: Theme.of(context).textTheme.headline6,
+                    textAlign: TextAlign.start,
                   ),
                 ),
-                SizedBox(width: 20),
-                Semantics(
-                  label: 'Increase Text Size Button',
-                  hint: 'Double tap to increase text size',
-                  button: true,
-                  onTapHint: 'Double tap to increase text size',
-                  child: GestureDetector(
-                    onTap: _increaseTextSize,
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+                SizedBox(height: 20),
+                Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Opções de Acessibilidade',
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                        SizedBox(height: 20),
+                        ListTile(
+                          leading: Icon(Icons.add_circle),
+                          title: Text('Aumentar Tamanho do Texto'),
+                          onTap: _increaseTextSize,
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.remove_circle),
+                          title: Text('Diminuir Tamanho do Texto'),
+                          onTap: _decreaseTextSize,
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.color_lens),
+                          title: Text('Ajuste de Contrastes'),
+                          onTap: _toggleHighContrast,
+                        ),
+                        // Adicione mais opções de acessibilidade aqui
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
-          ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.settings),
+          onPressed: () {
+            // Abra um menu com mais configurações
+          },
         ),
       ),
     );
   }
-}
 
-class AccessibilityApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'App de acessibilidade',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+  ThemeData _buildTheme() {
+    return ThemeData(
+      primarySwatch: Colors.blue,
+    );
+  }
+
+  ThemeData _buildHighContrastTheme() {
+    return ThemeData(
+      brightness: Brightness.dark,
+      primaryColor: Colors.yellow,
+      accentColor: Colors.black,
+      textTheme: TextTheme(
+        headline6: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
       ),
-      home: HomeScreen(),
+      fontFamily: 'Arial',
     );
   }
 }
 
 void main() {
-  runApp(AccessibilityApp());
+  runApp(HomeScreen());
 }
