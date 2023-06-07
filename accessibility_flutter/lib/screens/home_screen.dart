@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'accessibility_screen.dart';
 import 'voice_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -40,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'App de acessibilidade',
       theme: _highContrastEnabled ? _buildHighContrastTheme() : _buildTheme(),
       home: Scaffold(
@@ -59,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Text(
                     'Bem vindo ao app de acessibilidade',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                     textAlign: TextAlign.start,
                   ),
                 ),
@@ -73,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           'Opções de Acessibilidade',
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                         SizedBox(height: 20),
                         ListTile(
@@ -112,11 +114,43 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.settings),
-          onPressed: () {
-            // Abra um menu com mais configurações
-          },
+        floatingActionButton: Semantics(
+          label: 'Configurações',
+          hint: 'Pressione para abrir um menu com mais configurações',
+          child: FloatingActionButton(
+            child: Icon(Icons.settings),
+            onPressed: () {
+              final RenderBox overlay =
+                  Overlay.of(context).context.findRenderObject() as RenderBox;
+              showMenu(
+                context: context,
+                position: RelativeRect.fromRect(
+                  Rect.fromPoints(
+                    overlay.localToGlobal(overlay.size.bottomRight(Offset.zero),
+                        ancestor: overlay),
+                    overlay.localToGlobal(overlay.size.bottomRight(Offset.zero),
+                        ancestor: overlay),
+                  ),
+                  Offset.zero & overlay.size,
+                ),
+                items: [
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: Icon(Icons.accessibility),
+                      title: Text('Acessibilidade'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AccessibilityScreen()),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -132,9 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return ThemeData(
       brightness: Brightness.dark,
       primaryColor: Colors.yellow,
-      accentColor: Colors.black,
+      hintColor: Colors.black,
       textTheme: TextTheme(
-        headline6: TextStyle(
+        titleLarge: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: Colors.black,
