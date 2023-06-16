@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class VoiceSearchScreen extends StatefulWidget {
@@ -7,11 +8,13 @@ class VoiceSearchScreen extends StatefulWidget {
 }
 
 class _VoiceSearchScreenState extends State<VoiceSearchScreen> {
+  FlutterTts flutterTts = FlutterTts();
   late stt.SpeechToText _speechToText;
   bool _isListening = false;
   String _text = '';
 
   void _initSpeechToText() {
+    flutterTts.speak("Início da leitura por voz");
     _speechToText = stt.SpeechToText();
   }
 
@@ -32,6 +35,7 @@ class _VoiceSearchScreenState extends State<VoiceSearchScreen> {
 
       if (available) {
         setState(() {
+          flutterTts.speak("Fale o que deseja pesquisar");
           _isListening = true;
         });
 
@@ -48,6 +52,7 @@ class _VoiceSearchScreenState extends State<VoiceSearchScreen> {
 
   void _stopListening() {
     if (_isListening) {
+      flutterTts.speak("Leitura por voz finalizada");
       _speechToText.stop();
     }
   }
