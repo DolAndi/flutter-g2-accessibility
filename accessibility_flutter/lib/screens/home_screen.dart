@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'accessibility_screen.dart';
 import 'voice_search_screen.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,16 +8,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  FlutterTts flutterTts = FlutterTts();
+
   double _textScaleFactor = 1.0;
   bool _highContrastEnabled = false;
 
   void _increaseTextSize() {
+    flutterTts.speak('Tamanho do texto foi aumentado');
     setState(() {
       _textScaleFactor += 0.1;
     });
   }
 
   void _decreaseTextSize() {
+    flutterTts.speak('Tamanho do texto foi diminuido');
     setState(() {
       if (_textScaleFactor > 0.1) {
         _textScaleFactor -= 0.1;
@@ -26,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _toggleHighContrast() {
+    flutterTts.speak('Constraste Alterado');
     setState(() {
       _highContrastEnabled = !_highContrastEnabled;
     });
@@ -46,7 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
       theme: _highContrastEnabled ? _buildHighContrastTheme() : _buildTheme(),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('App de Acessibilidade'),
+          title: Text(
+            'App de Acessibilidade',
+            semanticsLabel: 'Barra descrevendo o nome do aplicativo',
+          ),
         ),
         body: Align(
           alignment: Alignment.topLeft,
@@ -80,17 +88,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(height: 20),
                         ListTile(
                           leading: Icon(Icons.add_circle),
-                          title: Text('Aumentar Tamanho do Texto'),
+                          title: Text(
+                            'Aumentar Tamanho do Texto',
+                            semanticsLabel: 'Aumentar Tamanho do Texto',
+                          ),
                           onTap: _increaseTextSize,
                         ),
                         ListTile(
                           leading: Icon(Icons.remove_circle),
-                          title: Text('Diminuir Tamanho do Texto'),
+                          title: Text(
+                            'Diminuir Tamanho do Texto',
+                            semanticsLabel: 'Diminuir Tamanho do Texto',
+                          ),
                           onTap: _decreaseTextSize,
                         ),
                         ListTile(
                           leading: Icon(Icons.color_lens),
-                          title: Text('Ajuste de Contrastes'),
+                          title: Text(
+                            'Ajuste de Contrastes',
+                            semanticsLabel: 'Ajuste de Contrastes',
+                          ),
                           onTap: _toggleHighContrast,
                         ),
                         // Adicione mais opções de acessibilidade aqui
@@ -105,51 +122,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: ListTile(
                       leading: Icon(Icons.mic),
-                      title: Text('Pesquisar por Voz'),
+                      title: Text(
+                        'Pesquisar por Voz',
+                        semanticsLabel: 'Pesquisar por Voz',
+                      ),
                       onTap: _navigateToVoiceSearchScreen,
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-        floatingActionButton: Semantics(
-          label: 'Configurações',
-          hint: 'Pressione para abrir um menu com mais configurações',
-          child: FloatingActionButton(
-            child: Icon(Icons.settings),
-            onPressed: () {
-              final RenderBox overlay =
-                  Overlay.of(context).context.findRenderObject() as RenderBox;
-              showMenu(
-                context: context,
-                position: RelativeRect.fromRect(
-                  Rect.fromPoints(
-                    overlay.localToGlobal(overlay.size.bottomRight(Offset.zero),
-                        ancestor: overlay),
-                    overlay.localToGlobal(overlay.size.bottomRight(Offset.zero),
-                        ancestor: overlay),
-                  ),
-                  Offset.zero & overlay.size,
-                ),
-                items: [
-                  PopupMenuItem(
-                    child: ListTile(
-                      leading: Icon(Icons.accessibility),
-                      title: Text('Acessibilidade'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AccessibilityScreen()),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              );
-            },
           ),
         ),
       ),
@@ -167,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
       brightness: Brightness.dark,
       primaryColor: Colors.yellow,
       hintColor: Colors.black,
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         titleLarge: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
